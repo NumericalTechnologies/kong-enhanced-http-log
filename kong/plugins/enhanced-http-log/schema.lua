@@ -150,6 +150,7 @@ local config_schema = Schema.define {
 
 return {
   name = "enhanced-http-log",
+  type = "record",
   fields = {
     { protocols = typedefs.protocols_http },
     { config = config_schema }
