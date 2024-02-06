@@ -3,7 +3,6 @@ local cjson = require "cjson"
 local url = require "socket.url"
 local http = require "resty.http"
 local sandbox = require "kong.tools.sandbox".sandbox
-local kong_meta = require "kong.meta"
 
 
 local kong = kong
