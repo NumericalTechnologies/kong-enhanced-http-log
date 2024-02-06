@@ -12,6 +12,7 @@ build = {
    modules = {
       ["kong.plugins.enhanced-http-log.access"] = "kong/plugins/enhanced-http-log/access.lua",
       ["kong.plugins.enhanced-http-log.handler"] = "kong/plugins/enhanced-http-log/handler.lua",
+      ["kong.plugins.enhanced-http-log.log"] = "kong/plugins/enhanced-http-log/log.lua",
       ["kong.plugins.enhanced-http-log.schema"] = "kong/plugins/enhanced-http-log/schema.lua",
    }
 }
