@@ -121,8 +121,8 @@ return {
                   initial_retry_delay =
                   {
                     type = "number",
-                    default = 0.01,
-                    between = { 0.001, 1000000 }, -- effectively unlimited maximum
+                    default = 1,
+                    between = { 1, 1000000 }, -- effectively unlimited maximum
                   }
                 },
                 {
@@ -130,7 +130,7 @@ return {
                   {
                     type = "number",
                     default = 60,
-                    between = { 0.001, 1000000 }, -- effectively unlimited maximum
+                    between = { 1, 1000000 }, -- effectively unlimited maximum
                   }
                 }
               }
