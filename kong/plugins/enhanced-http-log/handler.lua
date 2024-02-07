@@ -6,8 +6,8 @@ local KongEnhancedHttpLogHandler = {
   PRIORITY = 12,
 }
 
-function KongEnhancedHttpLogHandler:access(config)
-  access.execute(config)
+function KongEnhancedHttpLogHandler:access()
+  access.execute()
 end
 
 function KongEnhancedHttpLogHandler:log(config)

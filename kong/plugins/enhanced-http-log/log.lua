@@ -41,10 +41,8 @@ local function make_json_array_payload_function(conf, entries)
 
     if i == 1 then
       return '['
-
     elseif i < last then
       return i % 2 == 0 and entries[i / 2] or ','
-
     elseif i == last then
       return ']'
     end
@@ -68,7 +66,6 @@ local function parse_url(host_url)
   if not parsed_url.port then
     if parsed_url.scheme == "http" then
       parsed_url.port = 80
-
     elseif parsed_url.scheme == "https" then
       parsed_url.port = 443
     end
@@ -146,11 +143,10 @@ local function send_entries(conf, entries)
 
   if res.status < 300 then
     return true
-
   else
     return nil, "request to " .. host .. ":" .. tostring(port)
-      .. " returned status code " .. tostring(res.status) .. " and body "
-      .. response_body
+        .. " returned status code " .. tostring(res.status) .. " and body "
+        .. response_body
   end
 end
 
@@ -173,7 +169,7 @@ local function make_queue_name(conf)
 end
 
 
-function _M.log(conf)
+function _M.execute(conf)
   if conf.custom_fields_by_lua then
     local set_serialize_value = kong.log.set_serialize_value
     for key, expression in pairs(conf.custom_fields_by_lua) do
