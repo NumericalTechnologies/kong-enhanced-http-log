@@ -1,5 +1,5 @@
 package = "kong-enhanced-http-log"
-version = "1.0.0-8"
+version = "1.0.0-9"
 source = {
    url = "git+ssh://git@github.com/NumericalTechnologies/kong-enhanced-http-log.git"
 }
