@@ -2,8 +2,8 @@ local _M = {}
 local kong = kong
 
 function _M.execute()
-  local body = kong.request.get_body("application/json")
-  kong.ctx.plugin.request_body = body or {}
+  kong.ctx.plugin.request_headers = kong.request.get_headers() or {}
+  kong.ctx.plugin.request_body = kong.request.get_body("application/json") or {}
 end
 
 return _M
