@@ -113,7 +113,6 @@ end
 -- @param opts table, requires `name`, optionally includes `retry_count`, `max_coalescing_delay` and `max_batch_size`
 -- @return table: a Queue object.
 local function get_or_create_queue(queue_conf, handler, handler_conf)
-
   local name = assert(queue_conf.name)
   local key = make_queue_key(name)
 
@@ -176,22 +175,23 @@ end
 function Queue:log(handler, formatstring, ...)
   local message = "[" .. (self.log_tag or "") .. "] queue " .. self.name .. ": " .. formatstring
   if select('#', ...) > 0 then
-    return handler(string.format(message, unpack({...})))
+    return handler(string.format(message, unpack({ ... })))
   else
     return handler(message)
   end
 end
 
 function Queue:log_debug(...) self:log(kong.log.debug, ...) end
-function Queue:log_info(...) self:log(kong.log.info, ...) end
-function Queue:log_warn(...) self:log(kong.log.warn, ...) end
-function Queue:log_err(...) self:log(kong.log.err, ...) end
 
+function Queue:log_info(...) self:log(kong.log.info, ...) end
+
+function Queue:log_warn(...) self:log(kong.log.warn, ...) end
+
+function Queue:log_err(...) self:log(kong.log.err, ...) end
 
 function Queue:count()
   return self.back - self.front
 end
-
 
 -- Delete the frontmost entry from the queue and adjust the current utilization variables.
 function Queue:delete_frontmost_entry()
@@ -207,7 +207,6 @@ function Queue:delete_frontmost_entry()
   end
 end
 
-
 -- Drop the oldest entry, adjusting the semaphore value in the process.  This is
 -- called when the queue runs out of space and needs to make space.
 function Queue:drop_oldest_entry()
@@ -215,7 +214,6 @@ function Queue:drop_oldest_entry()
   self.semaphore:wait(0)
   self:delete_frontmost_entry()
 end
-
 
 -- Process one batch of entries from the queue.  Returns truthy if entries were processed, falsy if there was an
 -- error or no items were on the queue to be processed.
@@ -256,7 +254,7 @@ function Queue:process_once()
     end
   end
 
-  local batch = {unpack(self.entries, self.front, self.front + entry_count - 1)}
+  local batch = { unpack(self.entries, self.front, self.front + entry_count - 1) }
   for _ = 1, entry_count do
     self:delete_frontmost_entry()
   end
@@ -302,7 +300,6 @@ function Queue:process_once()
   end
 end
 
-
 local legacy_params_warned = {}
 
 local function maybe_warn(name, message)
@@ -317,17 +314,19 @@ end
 -- This function retrieves the queue parameters from a plugin configuration, converting legacy parameters
 -- to their new locations.
 function Queue.get_plugin_params(plugin_name, config, queue_name)
+  local plugin_id =
+  "enhanced-http-log-123"                   -- https://github.com/Kong/kong/pull/9903, supported only in 3.3.1, should be replaced once Kong supports both amd64 an arm64 arch
   local queue_config = config.queue or table_new(0, 5)
 
   -- create a tag to put into log files that identifies the plugin instance
-  local log_tag = plugin_name .. " plugin " .. kong.plugin.get_id()
+  local log_tag = plugin_name .. " plugin " .. plugin_id
   if config.plugin_instance_name then
     log_tag = log_tag .. " (" .. config.plugin_instance_name .. ")"
   end
   queue_config.log_tag = log_tag
 
   if not queue_config.name then
-    queue_config.name = queue_name or kong.plugin.get_id()
+    queue_config.name = queue_name or plugin_id
   end
 
   -- It is planned to remove the legacy parameters in Kong Gateway 4.0, removing
@@ -336,7 +335,7 @@ function Queue.get_plugin_params(plugin_name, config, queue_name)
     maybe_warn(
       queue_config.name,
       "the retry_count parameter no longer works, please update "
-        .. "your configuration to use initial_retry_delay and max_retry_time instead")
+      .. "your configuration to use initial_retry_delay and max_retry_time instead")
   end
 
   if (config.queue_size or null) ~= null and config.queue_size ~= 1 then
@@ -344,7 +343,7 @@ function Queue.get_plugin_params(plugin_name, config, queue_name)
     maybe_warn(
       queue_config.name,
       "the queue_size parameter is deprecated, please update your "
-        .. "configuration to use queue.max_batch_size instead")
+      .. "configuration to use queue.max_batch_size instead")
   end
 
   if (config.flush_timeout or null) ~= null and config.flush_timeout ~= 2 then
@@ -352,7 +351,7 @@ function Queue.get_plugin_params(plugin_name, config, queue_name)
     maybe_warn(
       queue_config.name,
       "the flush_timeout parameter is deprecated, please update your "
-        .. "configuration to use queue.max_coalescing_delay instead")
+      .. "configuration to use queue.max_coalescing_delay instead")
   end
 
   if (config.batch_span_count or null) ~= null and config.batch_span_count ~= 200 then
@@ -360,7 +359,7 @@ function Queue.get_plugin_params(plugin_name, config, queue_name)
     maybe_warn(
       queue_config.name,
       "the batch_span_count parameter is deprecated, please update your "
-        .. "configuration to use queue.max_batch_size instead")
+      .. "configuration to use queue.max_batch_size instead")
   end
 
   if (config.batch_flush_delay or null) ~= null and config.batch_flush_delay ~= 3 then
@@ -368,11 +367,10 @@ function Queue.get_plugin_params(plugin_name, config, queue_name)
     maybe_warn(
       queue_config.name,
       "the batch_flush_delay parameter is deprecated, please update your "
-        .. "configuration to use queue.max_coalescing_delay instead")
+      .. "configuration to use queue.max_coalescing_delay instead")
   end
   return queue_config
 end
-
 
 -------------------------------------------------------------------------------
 -- Add entry to the queue
@@ -403,7 +401,8 @@ local function enqueue(self, entry)
 
   if self.max_bytes then
     if type(entry) ~= "string" then
-      self:log_err("queuing non-string entry to a queue that has queue.max_bytes set, capacity monitoring will not be correct")
+      self:log_err(
+        "queuing non-string entry to a queue that has queue.max_bytes set, capacity monitoring will not be correct")
     else
       if #entry > self.max_bytes then
         local message = string.format(
@@ -436,7 +435,6 @@ end
 
 
 function Queue.enqueue(queue_conf, handler, handler_conf, value)
-
   assert(type(queue_conf) == "table",
     "arg #1 (queue_conf) must be a table")
   assert(type(handler) == "function",
@@ -457,7 +455,6 @@ function Queue._exists(name)
   local queue = queues[make_queue_key(name)]
   return queue and queue:count() > 0
 end
-
 
 Queue._CAPACITY_WARNING_THRESHOLD = CAPACITY_WARNING_THRESHOLD
 
