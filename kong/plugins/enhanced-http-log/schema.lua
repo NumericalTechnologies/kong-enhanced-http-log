@@ -1,7 +1,7 @@
 local typedefs = require "kong.db.schema.typedefs"
 
 return {
-  name = "enhanced-http-log",
+  name = "kong-enhanced-http-log",
   fields = {
     { protocols = typedefs.protocols },
     {
@@ -142,12 +142,10 @@ return {
               keys =
               {
                 type = "string",
-                len_min = 1
               },
               values =
               {
                 type = "string",
-                len_min = 1
               },
             }
           }
