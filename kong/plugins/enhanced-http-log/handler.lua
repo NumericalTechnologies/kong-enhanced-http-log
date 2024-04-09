@@ -3,7 +3,7 @@ local log = require("kong.plugins.enhanced-http-log.log")
 
 local KongEnhancedHttpLogHandler = {
   VERSION = "1.0.0",
-  PRIORITY = 12,
+  PRIORITY = 1030,
 }
 
 function KongEnhancedHttpLogHandler:access()
