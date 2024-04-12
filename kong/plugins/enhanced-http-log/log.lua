@@ -170,12 +170,15 @@ end
 
 
 function _M.execute(conf)
+  local set_serialize_value = kong.log.set_serialize_value
   if conf.custom_fields_by_lua then
-    local set_serialize_value = kong.log.set_serialize_value
     for key, expression in pairs(conf.custom_fields_by_lua) do
       set_serialize_value(key, sandbox(expression, sandbox_opts)())
     end
   end
+
+  set_serialize_value("request_headers", kong.ctx.plugin.request_headers)
+  set_serialize_value("request_body", kong.ctx.plugin.request_body)
 
   local queue_conf = Queue.get_plugin_params("enhanced-http-log", conf, make_queue_name(conf))
   kong.log.debug("Queue name automatically configured based on configuration parameters to: ", queue_conf.name)
