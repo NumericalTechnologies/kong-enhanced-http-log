@@ -168,6 +168,15 @@ local function make_queue_name(conf)
     conf.flush_timeout)
 end
 
+local function replace_table_null_values(table)
+  for key, value in pairs(table) do
+    if value == cjson.null then
+      table[key] = nil
+    elseif type(value) == "table" then
+      replace_table_null_values(table)
+    end
+  end
+end
 
 function _M.execute(conf)
   local set_serialize_value = kong.log.set_serialize_value
@@ -177,18 +186,8 @@ function _M.execute(conf)
     end
   end
 
-  set_serialize_value("request_headers", kong.ctx.plugin.request_headers)
-  set_serialize_value("request_body", kong.ctx.plugin.request_body)
-
-  kong.log.info("Logging headers")
-  kong.log.info(kong.ctx.plugin.request_headers)
-
-  if kong.ctx.plugin.request_body then
-    kong.log.info("Logging body")
-    kong.log.info(cjson.encode(kong.ctx.plugin.request_body))
-    kong.log.info(kong.ctx.plugin.request_body.id)
-  end
-
+  set_serialize_value("request_headers", replace_table_null_values(kong.ctx.plugin.request_headers))
+  set_serialize_value("request_body", replace_table_null_values(kong.ctx.plugin.request_body))
 
   local queue_conf = Queue.get_plugin_params("enhanced-http-log", conf, make_queue_name(conf))
   kong.log.debug("Queue name automatically configured based on configuration parameters to: ", queue_conf.name)
