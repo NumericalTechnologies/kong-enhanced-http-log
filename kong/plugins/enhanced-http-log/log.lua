@@ -180,6 +180,12 @@ function _M.execute(conf)
   set_serialize_value("request_headers", kong.ctx.plugin.request_headers)
   set_serialize_value("request_body", kong.ctx.plugin.request_body)
 
+  kong.log.info("Logging headers")
+  kong.log.info(kong.ctx.plugin.request_headers)
+
+  kong.log.info("Logging body")
+  kong.log.info(kong.ctx.plugin.request_body)
+
   local queue_conf = Queue.get_plugin_params("enhanced-http-log", conf, make_queue_name(conf))
   kong.log.debug("Queue name automatically configured based on configuration parameters to: ", queue_conf.name)
 
