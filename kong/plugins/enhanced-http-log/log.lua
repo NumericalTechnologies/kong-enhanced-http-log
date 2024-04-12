@@ -173,7 +173,7 @@ local function replace_table_null_values(table)
     if value == cjson.null then
       table[key] = nil
     elseif type(value) == "table" then
-      replace_table_null_values(table)
+      replace_table_null_values(value)
     end
   end
 end
