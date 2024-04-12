@@ -183,8 +183,11 @@ function _M.execute(conf)
   kong.log.info("Logging headers")
   kong.log.info(kong.ctx.plugin.request_headers)
 
-  kong.log.info("Logging body")
-  kong.log.info(kong.ctx.plugin.request_body)
+  if kong.ctx.plugin.request_body then
+    kong.log.info("Logging body")
+    kong.log.info(cjson.encode(kong.ctx.plugin.request_body))
+  end
+
 
   local queue_conf = Queue.get_plugin_params("enhanced-http-log", conf, make_queue_name(conf))
   kong.log.debug("Queue name automatically configured based on configuration parameters to: ", queue_conf.name)
