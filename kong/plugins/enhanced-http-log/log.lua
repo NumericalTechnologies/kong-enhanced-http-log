@@ -186,6 +186,7 @@ function _M.execute(conf)
   if kong.ctx.plugin.request_body then
     kong.log.info("Logging body")
     kong.log.info(cjson.encode(kong.ctx.plugin.request_body))
+    kong.log.info(kong.ctx.plugin.request_body.id)
   end
 
 
