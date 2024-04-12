@@ -186,7 +186,10 @@ function _M.execute(conf)
     end
   end
 
-  set_serialize_value("request_headers", replace_table_null_values(kong.ctx.plugin.request_headers))
+  local request_headers = replace_table_null_values(kong.ctx.plugin.request_headers)
+  kong.log.info(cjson.encode(kong.ctx.plugin.request_headers))
+  kong.log.info(cjson.encode(request_headers))
+  set_serialize_value("request_headers", request_headers)
   set_serialize_value("request_body", replace_table_null_values(kong.ctx.plugin.request_body))
 
   local queue_conf = Queue.get_plugin_params("enhanced-http-log", conf, make_queue_name(conf))
