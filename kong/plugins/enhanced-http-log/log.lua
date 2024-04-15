@@ -169,6 +169,10 @@ local function make_queue_name(conf)
 end
 
 local function replace_table_null_values(table)
+  if table == nil then
+    return
+  end
+
   for key, value in pairs(table) do
     if value == cjson.null then
       table[key] = nil
