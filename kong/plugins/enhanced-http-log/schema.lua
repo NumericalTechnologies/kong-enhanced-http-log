@@ -132,6 +132,14 @@ return {
                     default = 60,
                     between = { 1, 1000000 }, -- effectively unlimited maximum
                   }
+                },
+                {
+                  concurrency_limit =
+                  {
+                    type = "number",
+                    default = 1,
+                    one_of = { -1, 1 },
+                  }
                 }
               }
             }
